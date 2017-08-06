@@ -1,0 +1,29 @@
+A basic wiki lookup bot for Discord.
+
+Installation:
+1) Install Python 3.6 or newer (NOTE: Python 3.5 is not tested but may work)
+2) Run the following command:
+   python -m pip install -U discord.py requests cachetools
+   (Linux users may have to explicitly use "python3" instead;
+   in all cases, check your PATH environment variable and Python 3's
+   installation path if you have both Python 2 and Python 3 installed)
+3) Follow this guide to set up a bot account for your Discord channel:
+   https://github.com/Just-Some-Bots/MusicBot/wiki/FAQ
+4) Edit the "token" line in default.ini with the appropriate OAuth token,
+   taken from the "My Apps" Discord developer page.
+5) Edit the "baseURL" line in default.ini with the URL of your wiki's
+   home page (minus the "index.php" part and trailing slash).
+
+To start the bot, run the following command:
+   python main.py
+   (Linux users may have to explicitly use "python3" instead;
+   in all cases, check your PATH environment variable and Python 3's
+   installation path if you have both Python 2 and Python 3 installed)
+NOTE: The config file to load can also be explicitly specified, like this:
+   python main.py myconfig.ini
+
+Once the bot is running, users can type "!wiki name" to search for something
+by name, or "!wiki category name" to restrict their search to a single
+category.  The shorthand aliases that correspond to a category are specified
+in default.ini, and any category not listed in default.ini won't be usable
+(NOTE: arbitrary categories may be supported in a future version).
