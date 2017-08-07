@@ -5,8 +5,9 @@ commandPrefix = "!"
 emptyPair = (None, None)
 
 class DiscordBotClient(Client):
-	def __init__(self):
+	def __init__(self, config):
 		super().__init__()
+		self.config = config
 		self.commandHandlers = {}
 
 	def mapIntersection(self, myMap, mySet):

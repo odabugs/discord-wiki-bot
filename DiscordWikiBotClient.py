@@ -26,9 +26,8 @@ def resultIDs(response, *args):
 
 class DiscordWikiBotClient(DiscordBotClient):
 	def __init__(self, config):
-		super().__init__()
+		super().__init__(config)
 		self.addCommandHandler("wiki", self.wikiLookup)
-		self.config = config
 		self.queryCache = TTLCache(
 			maxsize=config.resultCacheSize,
 			ttl=config.resultTTL,
