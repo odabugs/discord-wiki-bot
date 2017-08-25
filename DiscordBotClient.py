@@ -1,5 +1,6 @@
 from discord import Client, Game
 import re
+import asyncio
 
 commandPrefix = "!"
 emptyPair = (None, None)
@@ -38,13 +39,15 @@ class DiscordBotClient(Client):
 		return emptyPair
 
 	# "mentions" the replied-to user if the message isn't in a PM
-	async def reply(self, message, reply, suppressNotify=False):
+	@asyncio.coroutine
+	def reply(self, message, reply, suppressNotify=False):
 		#print(reply)
 		if not suppressNotify and not message.channel.is_private:
 			reply = "".join([message.author.mention, ": ", reply])
-		await self.send_message(message.channel, reply)
+		yield from self.send_message(message.channel, reply)
 
-	async def on_ready(self):
+	@asyncio.coroutine
+	def on_ready(self):
 		user = self.user
 		print(str.format("Logged in as {}#{} (ID: {})",
 			user.name, user.discriminator, user.id))
@@ -52,12 +55,13 @@ class DiscordBotClient(Client):
 		nowPlaying = self.config.nowPlaying
 		if len(nowPlaying) > 0:
 			asGame = Game(name=nowPlaying)
-			await self.change_presence(game=asGame)
+			yield from self.change_presence(game=asGame)
 
-	async def on_message(self, message):
+	@asyncio.coroutine
+	def on_message(self, message):
 		if message.author == self.user:
 			return
 		key, handler = self.lookupCommandHandler(message)
 		#print(key, handler)
 		if callable(handler):
-			await handler(message)
+			yield from handler(message)

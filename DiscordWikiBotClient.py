@@ -2,6 +2,8 @@ from DiscordBotClient import DiscordBotClient
 from cachetools import TTLCache
 import requests
 import re
+import asyncio
+import time
 
 canLinkByTitle = re.compile("^[ \w:'/+]+$")
 emptySet = set()
@@ -112,10 +114,12 @@ class DiscordWikiBotClient(DiscordBotClient):
 				str(result["pageid"]),
 				" (", result["title"], ")"])
 
-	async def wikiLookup(self, message):
+	@asyncio.coroutine
+	def wikiLookup(self, message):
 		query = self.partAfterCommand(message)
+		startTime = time.time()
 		if query is None:
-			await self.reply(message,
+			yield from self.reply(message,
 				"Type **!wiki** followed by a name or game + name to search")
 			return
 		try:
@@ -129,19 +133,19 @@ class DiscordWikiBotClient(DiscordBotClient):
 				#print("Performing basic search")
 				result = self.basicSearch(query)
 			if result is None or len(result) == 0:
-				await self.reply(message, str.format(
+				yield from self.reply(message, str.format(
 					"No result found for search query **{}**",
 					query))
 			else:
-				await self.reply(message, self.asWikiLink(result))
+				yield from self.reply(message, self.asWikiLink(result))
 		except requests.Timeout:
-			await self.reply(message,
+			yield from self.reply(message,
 				"**ERROR:** Search request took too long to return a response")
 		except requests.HTTPError:
-			await self.reply(message, str.format(
+			yield from self.reply(message, str.format(
 				"**ERROR:** Search request failed with HTTP status code {}",
 				response.status_code))
 		except:
-			await self.reply(message, 
+			yield from self.reply(message,
 				"**ERROR:** Search request returned invalid content from the server")
-		#print("Finished query: " + query)
+		#print("Finished query in {} ms: {}".format(time.time() - startTime, query))

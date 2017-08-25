@@ -1,7 +1,7 @@
 A basic wiki lookup bot for Discord.
 
 Installation:
-1) Install Python 3.6 or newer (NOTE: Python 3.5 is not tested but may work)
+1) Install Python 3.4.2 or newer
 2) Run the following command:
    python -m pip install -U discord.py requests cachetools
    (Linux users may have to explicitly use "python3" instead;
