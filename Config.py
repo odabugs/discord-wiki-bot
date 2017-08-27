@@ -5,6 +5,7 @@ categoryMatcher = re.compile("^category\..+$")
 defaultSearchTimeout = 10 # seconds
 defaultTTL = 10 # seconds
 defaultCacheSize = 100 # oldest cache entries are expunged past this many
+defaultConnectionLimitPerHost = 10 # max simultaneous connections to the same host
 
 class Config():
 	def __init__(self, sourcePath=None):
@@ -20,6 +21,7 @@ class Config():
 		self.resultCacheSize = defaultCacheSize
 		self.categoryTTL = defaultTTL
 		self.categoryCacheSize = defaultCacheSize
+		self.connectionLimitPerHost = defaultConnectionLimitPerHost
 		self.categories = {}
 		self.aliases = {}
 		self.aliasPrefixes = []
@@ -48,9 +50,11 @@ class Config():
 
 		# handle "search" section
 		section = p["search"]
-		self.searchTimeout = section.getint("searchTimeout", self.searchTimeout)
+		self.searchTimeout = section.getfloat("searchTimeout", self.searchTimeout)
 		self.resultTTL = section.getint("ttl", self.resultTTL)
 		self.resultCacheSize = section.getint("cacheSize", self.resultCacheSize)
+		self.connectionLimitPerHost = section.getint("maxConnections",
+			self.connectionLimitPerHost)
 
 		# handle "categoryDefaults" section
 		section = p["categoryDefaults"]

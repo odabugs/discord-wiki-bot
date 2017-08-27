@@ -51,7 +51,7 @@ class DiscordBotClient(Client):
 		user = self.user
 		print(str.format("Logged in as {}#{} (ID: {})",
 			user.name, user.discriminator, user.id))
-		print("Press Ctrl-C in this console window to exit")
+		print("Press Ctrl-C in this console window to exit.")
 		nowPlaying = self.config.nowPlaying
 		if len(nowPlaying) > 0:
 			asGame = Game(name=nowPlaying)
