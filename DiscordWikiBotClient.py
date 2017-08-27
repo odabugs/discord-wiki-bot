@@ -102,7 +102,7 @@ class DiscordWikiBotClient(DiscordBotClient):
 		result = self.queryCache[query]
 		if len(result) == 0:
 			return None
-		return result.popitem()[1]
+		return next(iter(result.items()))[1]
 
 	@asyncio.coroutine
 	def categorySearch(self, category, query):
@@ -137,7 +137,7 @@ class DiscordWikiBotClient(DiscordBotClient):
 				if alias in pageTitle:
 					return result
 		# failing the above, just pop off an arbitrary result and return it
-		return filtered.popitem()[1]
+		return next(iter(filtered.items()))[1]
 
 	def asWikiLink(self, result):
 		#print(result)
