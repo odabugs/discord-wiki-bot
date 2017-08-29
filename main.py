@@ -9,8 +9,7 @@ defaultConfigPath = "default.ini"
 if __name__ == "__main__":
 	config = Config()
 	if len(sys.argv) > 1:
-		for configFile in sys.argv[1:]:
-			config.load(configFile)
+		config.load(sys.argv[1])
 	else:
 		config.load(defaultConfigPath)
 	client = DiscordWikiBotClient(config)
