@@ -1,8 +1,9 @@
 A basic wiki lookup bot for Discord.
+https://github.com/odabugs/discord-wiki-bot
 
 Requirements:
 - Python 3.4.2 or newer
-- Required pip modules: discord.py aiohttp cachetools
+- Required pip modules: discord.py aiohttp cachetools tzlocal
 - Optional pip modules (for improved performance): cchardet aiodns
 
 First-time setup:
