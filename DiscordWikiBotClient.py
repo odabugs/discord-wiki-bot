@@ -6,7 +6,7 @@ import asyncio
 import time
 import re
 
-canLinkByTitle = re.compile("^[ \w:'/+]+$")
+canLinkByTitle = re.compile("^[ \w:'/+]+$") # discord screws up URLs ending with )
 emptySet = set()
 emptyMap = {}
 def identity(x, *args):
@@ -60,7 +60,7 @@ class DiscordWikiBotClient(DiscordBotClient):
 
 	@asyncio.coroutine
 	def fetchSearch(self, query):
-		#print("Calling fetchSearch for key: " + query)
+		#self.log("Calling fetchSearch for key: " + query)
 		params = {
 			"action": "query",
 			"format": "json",
@@ -70,12 +70,12 @@ class DiscordWikiBotClient(DiscordBotClient):
 		}
 		result = yield from self.fetchResponse(params, resultMap, emptyMap)
 		self.queryCache[query] = result
-		#print("Completed fetchSearch for key: " + query)
+		#self.log("Completed fetchSearch for key: " + query)
 
 	# return a set containing the page ID # of each page in the category
 	@asyncio.coroutine
 	def fetchCategory(self, cat):
-		#print("Calling fetchCategory for key: " + cat)
+		#self.log("Calling fetchCategory for key: " + cat)
 		params = {
 			"action": "query",
 			"format": "json",
@@ -86,7 +86,7 @@ class DiscordWikiBotClient(DiscordBotClient):
 		}
 		result = yield from self.fetchResponse(params, resultIDs, emptySet)
 		self.categoryCache[cat] = result
-		#print("Completed fetchCategory for key: " + cat)
+		#self.log("Completed fetchCategory for key: " + cat)
 
 	def getCategoryReference(self, query):
 		splitQuery = query.split(maxsplit=1)
@@ -140,7 +140,6 @@ class DiscordWikiBotClient(DiscordBotClient):
 		return next(iter(filtered.items()))[1]
 
 	def asWikiLink(self, result):
-		#print(result)
 		title = result["title"]
 		if canLinkByTitle.match(title):
 			return self.config.titleLinkURL + title.replace(" ", "_")
@@ -159,14 +158,14 @@ class DiscordWikiBotClient(DiscordBotClient):
 				"Type **!wiki** followed by a name or game + name to search")
 			return
 		try:
-			print("Starting query: " + query)
+			self.log("Starting query: " + query)
 			result = None
 			category = self.getCategoryReference(query)
 			if category is not None:
-				#print("Performing category search: " + category["title"])
+				#self.log("Performing category search: " + category["title"])
 				result = yield from self.categorySearch(category, query)
 			else:
-				#print("Performing basic search")
+				#self.log("Performing basic search")
 				result = yield from self.basicSearch(query)
 			if result is None or len(result) == 0:
 				yield from self.reply(message, str.format(
@@ -184,4 +183,4 @@ class DiscordWikiBotClient(DiscordBotClient):
 		except:
 			yield from self.reply(message,
 				"**ERROR:** Search request returned invalid content from the server")
-		print("Finished query in {:0.2f} seconds: {}".format(time.time() - startTime, query))
+		self.log("Finished query in {:0.2f} seconds: {}", time.time() - startTime, query)

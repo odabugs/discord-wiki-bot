@@ -6,6 +6,7 @@ defaultSearchTimeout = 10 # seconds
 defaultTTL = 10 # seconds
 defaultCacheSize = 100 # oldest cache entries are expunged past this many
 defaultConnectionLimitPerHost = 10 # max simultaneous connections to the same host
+defaultTimestampFormat = "%Y-%m-%d %H:%M:%S.%f %Z"
 
 class Config():
 	def __init__(self, sourcePath=None):
@@ -22,6 +23,7 @@ class Config():
 		self.categoryTTL = defaultTTL
 		self.categoryCacheSize = defaultCacheSize
 		self.connectionLimitPerHost = defaultConnectionLimitPerHost
+		self.timestampFormat = defaultTimestampFormat
 		self.categories = {}
 		self.aliases = {}
 		self.aliasPrefixes = []
@@ -55,6 +57,11 @@ class Config():
 		self.resultCacheSize = section.getint("cacheSize", self.resultCacheSize)
 		self.connectionLimitPerHost = section.getint("maxConnections",
 			self.connectionLimitPerHost)
+
+		# handle "logging" section
+		section = p["logging"]
+		self.timetstampFormat = section.get("timestampFormat",
+			raw=True, fallback=self.timestampFormat)
 
 		# handle "categoryDefaults" section
 		section = p["categoryDefaults"]

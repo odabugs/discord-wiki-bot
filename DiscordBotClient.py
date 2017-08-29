@@ -1,6 +1,9 @@
 from discord import Client, Game
+from datetime import datetime
+import time
 import re
 import asyncio
+import tzlocal
 
 commandPrefix = "!"
 emptyPair = (None, None)
@@ -10,6 +13,7 @@ class DiscordBotClient(Client):
 		super().__init__()
 		self.config = config
 		self.commandHandlers = {}
+		self.localTimeZone = tzlocal.get_localzone()
 
 	def mapIntersection(self, myMap, mySet):
 		result = {}
@@ -17,6 +21,14 @@ class DiscordBotClient(Client):
 		for key in intersection:
 			result[key] = myMap[key]
 		return result
+
+	def log(self, message, *args):
+		rawTime = time.time()
+		localTime = datetime.fromtimestamp(rawTime, self.localTimeZone)
+		timestamp = localTime.strftime(self.config.timestampFormat)
+		if len(args) > 0:
+			message = message.format(*args)
+		print("[", timestamp, "] ", message, sep="")
 
 	def commandRE(self, command):
 		pattern = "".join(["^", commandPrefix, command, ".*$"])
@@ -41,7 +53,6 @@ class DiscordBotClient(Client):
 	# "mentions" the replied-to user if the message isn't in a PM
 	@asyncio.coroutine
 	def reply(self, message, reply, suppressNotify=False):
-		#print(reply)
 		if not suppressNotify and not message.channel.is_private:
 			reply = "".join([message.author.mention, ": ", reply])
 		yield from self.send_message(message.channel, reply)
@@ -49,9 +60,9 @@ class DiscordBotClient(Client):
 	@asyncio.coroutine
 	def on_ready(self):
 		user = self.user
-		print(str.format("Logged in as {}#{} (ID: {})",
-			user.name, user.discriminator, user.id))
-		print("Press Ctrl-C in this console window to exit.")
+		self.log("Logged in as {}#{} (ID: {})",
+			user.name, user.discriminator, user.id)
+		self.log("Press Ctrl-C in this console window to exit.")
 		nowPlaying = self.config.nowPlaying
 		if len(nowPlaying) > 0:
 			asGame = Game(name=nowPlaying)
@@ -62,6 +73,5 @@ class DiscordBotClient(Client):
 		if message.author == self.user:
 			return
 		key, handler = self.lookupCommandHandler(message)
-		#print(key, handler)
 		if callable(handler):
 			yield from handler(message)
