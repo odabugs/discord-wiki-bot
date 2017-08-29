@@ -45,10 +45,10 @@ class Config():
 		
 		# handle "wiki" section
 		section = p["wiki"]
-		self.baseURL = section["baseURL"]
-		self.queryURL = section["queryURL"]
-		self.linkURL = section["linkURL"]
-		self.titleLinkURL = section["titleLinkURL"]
+		self.baseURL = section.get("baseURL", self.baseURL)
+		self.queryURL = section.get("queryURL", self.queryURL)
+		self.linkURL = section.get("linkURL", self.linkURL)
+		self.titleLinkURL = section.get("titleLinkURL", self.titleLinkURL)
 
 		# handle "search" section
 		section = p["search"]
